@@ -10,13 +10,32 @@ The dataset used in this analysis is available [https://usa.ipums.org/usa/index.
 ## 2. Overview of Ratio Estimators
 Ratio estimators provide a method for estimating population parameters by using auxiliary information. 
 
-```{r}
+```{r, message=FALSE}
 #| echo: false
 # Load the necessary libraries
 library(dplyr)
+library(haven)
+library(tidyverse)
+library(labelled)
 
 # Read the dataset (assuming it's a CSV)
 data <- read.csv("/Users/dragon/Desktop/usa_00001.csv.gz")
+```
+The number of respondents were there in each state (STATEICP) that had a doctoral degree as their highest educational attainment (EDUC)
+```{r, message=FALSE}
+#| echo: false
+
+cleaned <- 
+  data |>
+  select(STATEICP,EDUC, EDUCD) |>
+  to_factor()
+
+doctoral_counts <- cleaned |>
+  filter(EDUCD == 116) |>  # Filter rows with "Doctoral degree"
+  group_by(STATEICP) |>
+  summarise(doctoral_count = n()) |>  # Count respondents with a doctoral degree in each state
+  ungroup()
+doctoral_counts
 ```
 
 ```{r}
